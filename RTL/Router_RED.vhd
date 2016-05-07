@@ -676,9 +676,9 @@ begin
     -- end if;
     end process REDUNDANT_FIFO;
 
-    REDUNDANT_LBDR : process (Req_EE_r, Req_EL_r, Req_EN_r, Req_ES_r, Req_EW_r, Req_LE_r, Req_LL_r, Req_LN_r, Req_LS_r, Req_LW_r, Req_NE_r, Req_NL_r, Req_NN_r, Req_NS_r, Req_NW_r, Req_SE_r, Req_SL_r, Req_SN_r, Req_SS_r, Req_SW_r, Req_WE_r, Req_WL_r, Req_WN_r, Req_WS_r, Req_WW_r) is
+    REDUNDANT_LBDR : process (FIFO_D_out_E, FIFO_D_out_L, FIFO_D_out_N, FIFO_D_out_S, FIFO_D_out_W, LBDR_Fault_Info(0), LBDR_Fault_Info(1), LBDR_Fault_Info(2), LBDR_Fault_Info(3), LBDR_Fault_Info(4), Req_EE_r, Req_EL_r, Req_EN_r, Req_ES_r, Req_EW_r, Req_LE_r, Req_LL_r, Req_LN_r, Req_LS_r, Req_LW_r, Req_NE_r, Req_NL_r, Req_NN_r, Req_NS_r, Req_NW_r, Req_SE_r, Req_SL_r, Req_SN_r, Req_SS_r, Req_SW_r, Req_WE_r, Req_WL_r, Req_WN_r, Req_WS_r, Req_WW_r, Req_XE_rd, Req_XL_rd, Req_XN_rd, Req_XS_rd, Req_XW_rd, empty_E, empty_L, empty_N, empty_S, empty_W) is
     begin
-        --defaults
+        --defaults. TODO: do not work
         empty_X_rd                                                             <= '0';
         FIFO_D_out_X_rd(DATA_WIDTH - 1 downto DATA_WIDTH - 3)                  <= (others => '0');
         FIFO_D_out_X_rd(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19) <= (others => '0');
@@ -713,64 +713,64 @@ begin
         Req_LS <= Req_LS_r;
         Req_LL <= Req_LL_r;
 
-    -- if Fault_On_LBDR_N = '1' then
-    --     empty_X_rd                                                             <= empty_N;
-    --     FIFO_D_out_X_rd(DATA_WIDTH - 1 downto DATA_WIDTH - 3)                  <= FIFO_D_out_N(DATA_WIDTH - 1 downto DATA_WIDTH - 3);
-    --     FIFO_D_out_X_rd(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19) <= FIFO_D_out_N(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19);
-    --
-    --     Req_NN <= Req_XN_rd;
-    --     Req_NE <= Req_XE_rd;
-    --     Req_NW <= Req_XW_rd;
-    --     Req_NS <= Req_XS_rd;
-    --     Req_NL <= Req_XL_rd;
-    --
-    -- elsif Fault_On_LBDR_E = '1' then
-    --     empty_X_rd                                                             <= empty_E;
-    --     FIFO_D_out_X_rd(DATA_WIDTH - 1 downto DATA_WIDTH - 3)                  <= FIFO_D_out_E(DATA_WIDTH - 1 downto DATA_WIDTH - 3);
-    --     FIFO_D_out_X_rd(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19) <= FIFO_D_out_E(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19);
-    --
-    --     Req_EN <= Req_XN_rd;
-    --     Req_EE <= Req_XE_rd;
-    --     Req_EW <= Req_XW_rd;
-    --     Req_ES <= Req_XS_rd;
-    --     Req_EL <= Req_XL_rd;
-    --
-    -- elsif Fault_On_LBDR_W = '1' then
-    --     empty_X_rd                                                             <= empty_W;
-    --     FIFO_D_out_X_rd(DATA_WIDTH - 1 downto DATA_WIDTH - 3)                  <= FIFO_D_out_W(DATA_WIDTH - 1 downto DATA_WIDTH - 3);
-    --     FIFO_D_out_X_rd(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19) <= FIFO_D_out_W(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19);
-    --
-    --     Req_WN <= Req_XN_rd;
-    --     Req_WE <= Req_XE_rd;
-    --     Req_WW <= Req_XW_rd;
-    --     Req_WS <= Req_XS_rd;
-    --     Req_WL <= Req_XL_rd;
-    --
-    -- elsif Fault_On_LBDR_S = '1' then
-    --     empty_X_rd                                                             <= empty_S;
-    --     FIFO_D_out_X_rd(DATA_WIDTH - 1 downto DATA_WIDTH - 3)                  <= FIFO_D_out_S(DATA_WIDTH - 1 downto DATA_WIDTH - 3);
-    --     FIFO_D_out_X_rd(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19) <= FIFO_D_out_S(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19);
-    --
-    --     Req_SN <= Req_XN_rd;
-    --     Req_SE <= Req_XE_rd;
-    --     Req_SW <= Req_XW_rd;
-    --     Req_SS <= Req_XS_rd;
-    --     Req_SL <= Req_XL_rd;
-    --
-    -- elsif Fault_On_LBDR_L = '1' then
-    --     empty_X_rd                                                             <= empty_L;
-    --     FIFO_D_out_X_rd(DATA_WIDTH - 1 downto DATA_WIDTH - 3)                  <= FIFO_D_out_L(DATA_WIDTH - 1 downto DATA_WIDTH - 3);
-    --     FIFO_D_out_X_rd(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19) <= FIFO_D_out_L(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19);
-    --
-    --     Req_LN <= Req_XN_rd;
-    --     Req_LE <= Req_XE_rd;
-    --     Req_LW <= Req_XW_rd;
-    --     Req_LS <= Req_XS_rd;
-    --     Req_LL <= Req_XL_rd;
-    --
-    -- else
-    --     null;
-    -- end if;
+     if Fault_On_LBDR_N = '1' then
+         empty_X_rd                                                             <= empty_N;
+         FIFO_D_out_X_rd(DATA_WIDTH - 1 downto DATA_WIDTH - 3)                  <= FIFO_D_out_N(DATA_WIDTH - 1 downto DATA_WIDTH - 3);
+         FIFO_D_out_X_rd(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19) <= FIFO_D_out_N(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19);
+
+         Req_NN <= Req_XN_rd;
+         Req_NE <= Req_XE_rd;
+         Req_NW <= Req_XW_rd;
+         Req_NS <= Req_XS_rd;
+         Req_NL <= Req_XL_rd;
+
+     elsif Fault_On_LBDR_E = '1' then
+         empty_X_rd                                                             <= empty_E;
+         FIFO_D_out_X_rd(DATA_WIDTH - 1 downto DATA_WIDTH - 3)                  <= FIFO_D_out_E(DATA_WIDTH - 1 downto DATA_WIDTH - 3);
+         FIFO_D_out_X_rd(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19) <= FIFO_D_out_E(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19);
+
+         Req_EN <= Req_XN_rd;
+         Req_EE <= Req_XE_rd;
+         Req_EW <= Req_XW_rd;
+         Req_ES <= Req_XS_rd;
+         Req_EL <= Req_XL_rd;
+
+     elsif Fault_On_LBDR_W = '1' then
+         empty_X_rd                                                             <= empty_W;
+         FIFO_D_out_X_rd(DATA_WIDTH - 1 downto DATA_WIDTH - 3)                  <= FIFO_D_out_W(DATA_WIDTH - 1 downto DATA_WIDTH - 3);
+         FIFO_D_out_X_rd(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19) <= FIFO_D_out_W(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19);
+
+         Req_WN <= Req_XN_rd;
+         Req_WE <= Req_XE_rd;
+         Req_WW <= Req_XW_rd;
+         Req_WS <= Req_XS_rd;
+         Req_WL <= Req_XL_rd;
+
+     elsif Fault_On_LBDR_S = '1' then
+         empty_X_rd                                                             <= empty_S;
+         FIFO_D_out_X_rd(DATA_WIDTH - 1 downto DATA_WIDTH - 3)                  <= FIFO_D_out_S(DATA_WIDTH - 1 downto DATA_WIDTH - 3);
+         FIFO_D_out_X_rd(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19) <= FIFO_D_out_S(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19);
+
+         Req_SN <= Req_XN_rd;
+         Req_SE <= Req_XE_rd;
+         Req_SW <= Req_XW_rd;
+         Req_SS <= Req_XS_rd;
+         Req_SL <= Req_XL_rd;
+
+     elsif Fault_On_LBDR_L = '1' then
+         empty_X_rd                                                             <= empty_L;
+         FIFO_D_out_X_rd(DATA_WIDTH - 1 downto DATA_WIDTH - 3)                  <= FIFO_D_out_L(DATA_WIDTH - 1 downto DATA_WIDTH - 3);
+         FIFO_D_out_X_rd(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19) <= FIFO_D_out_L(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19);
+
+         Req_LN <= Req_XN_rd;
+         Req_LE <= Req_XE_rd;
+         Req_LW <= Req_XW_rd;
+         Req_LS <= Req_XS_rd;
+         Req_LL <= Req_XL_rd;
+
+     else
+         null;
+     end if;
     end process REDUNDANT_LBDR;
 
    REDUNDANT_Arbiter : process (Grant_EE_r, Grant_EL_r, Grant_EN_r, Grant_ES_r, Grant_EW_r, Grant_LE_r, Grant_LL_r, Grant_LN_r, Grant_LS_r, Grant_LW_r, Grant_NE_r, Grant_NL_r, Grant_NN_r, Grant_NS_r, Grant_NW_r, Grant_SE_r, Grant_SL_r, Grant_SN_r, Grant_SS_r, Grant_SW_r, Grant_WE_r, Grant_WL_r, Grant_WN_r, Grant_WS_r, Grant_WW_r, RTS_E_r, RTS_L_r, RTS_N_r, RTS_S_r, RTS_W_r, Xbar_sel_E_r, Xbar_sel_L_r, Xbar_sel_N_r, Xbar_sel_S_r, Xbar_sel_W_r, Arbiter_Fault_Info(0), Arbiter_Fault_Info(1), Arbiter_Fault_Info(2), Arbiter_Fault_Info(3), Arbiter_Fault_Info(4), DCTS_E, DCTS_L, DCTS_N, DCTS_S, DCTS_w, Grant_AREDXE_rd, Grant_AREDXL_rd, Grant_AREDXN_rd, Grant_AREDXS_rd, Grant_AREDXW_rd, RTS_REDX_rd, Req_EL, Req_EN, Req_ES, Req_EW, Req_LE, Req_LN, Req_LS, Req_LW, Req_NE, Req_NL, Req_NS, Req_NW, Req_SE, Req_SL, Req_SN, Req_SW, Req_WE, Req_WL, Req_WN, Req_WS, Xbar_sel_AREDX_rd) is
