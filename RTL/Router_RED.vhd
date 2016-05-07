@@ -232,7 +232,7 @@ begin
     -- all the FIFOs
     FIFO_N : FIFO generic map(DATA_WIDTH => DATA_WIDTH)
         PORT MAP(reset     => reset,
-                 clk       => clk,
+                 clk       => '0',
                  RX        => RX_N,
                  DRTS      => DRTS_N,
                  read_en_N => '0',
@@ -581,9 +581,9 @@ begin
     ------------------------------------------------------------------------------------------------------------------------------
 
     -- all processes for redundancy
-    REDUNDANT_FIFO : process (CTS_E_r, CTS_L_r, CTS_N_r, CTS_S_r, CTS_w_r, FIFO_D_out_E_r, FIFO_D_out_L_r, FIFO_D_out_N_r, FIFO_D_out_S_r, FIFO_D_out_W_r, empty_E_r, empty_L_r, empty_N_r, empty_S_r, empty_W_r) is
+     REDUNDANT_FIFO : process (CTS_E_r, CTS_L_r, CTS_N_r, CTS_S_r, CTS_w_r, FIFO_D_out_E_r, FIFO_D_out_L_r, FIFO_D_out_N_r, FIFO_D_out_S_r, FIFO_D_out_W_r, empty_E_r, empty_L_r, empty_N_r, empty_S_r, empty_W_r, CTS_X_rd, DRTS_E, DRTS_L, DRTS_N, DRTS_S, DRTS_W, FIFO_D_out_X_rd, FIFO_Fault_Info(0), FIFO_Fault_Info(1), FIFO_Fault_Info(2), FIFO_Fault_Info(3), FIFO_Fault_Info(4), Grant_EL, Grant_EN, Grant_ES, Grant_EW, Grant_LE, Grant_LN, Grant_LS, Grant_LW, Grant_NE, Grant_NL, Grant_NS, Grant_NW, Grant_SE, Grant_SL, Grant_SN, Grant_SW, Grant_WE, Grant_WL, Grant_WN, Grant_WS, RX_E, RX_L, RX_N, RX_S, RX_W, empty_X_rd) is
     begin
-        --defaults
+        --defaults TODO: this don't work
         RX_X_rd     <= (others => '0');
         DRTS_X_rd   <= '0';
         Grant_NX_rd <= '0';
@@ -610,75 +610,75 @@ begin
         FIFO_D_out_S <= FIFO_D_out_S_r;
         FIFO_D_out_L <= FIFO_D_out_L_r;
 
-    -- if Fault_On_FIFO_N = '1' then
-    --     RX_X_rd     <= RX_N;
-    --     DRTS_X_rd   <= DRTS_N;
-    --     Grant_NX_rd <= '0';
-    --     Grant_EX_rd <= Grant_EN;
-    --     Grant_WX_rd <= Grant_WN;
-    --     Grant_SX_rd <= Grant_SN;
-    --     Grant_LX_rd <= Grant_LN;
-    --
-    --     CTS_N        <= CTS_X_rd;
-    --     empty_N      <= empty_X_rd;
-    --     FIFO_D_out_N <= FIFO_D_out_X_rd;
-    --
-    -- elsif Fault_On_FIFO_E = '1' then
-    --     RX_X_rd     <= RX_E;
-    --     DRTS_X_rd   <= DRTS_E;
-    --     Grant_NX_rd <= Grant_NE;
-    --     Grant_EX_rd <= '0';
-    --     Grant_WX_rd <= Grant_WE;
-    --     Grant_SX_rd <= Grant_SE;
-    --     Grant_LX_rd <= Grant_LE;
-    --
-    --     CTS_E        <= CTS_X_rd;
-    --     empty_E      <= empty_X_rd;
-    --     FIFO_D_out_E <= FIFO_D_out_X_rd;
-    -- elsif Fault_On_FIFO_W = '1' then
-    --     RX_X_rd     <= RX_W;
-    --     DRTS_X_rd   <= DRTS_W;
-    --     Grant_NX_rd <= Grant_NW;
-    --     Grant_EX_rd <= Grant_EW;
-    --     Grant_WX_rd <= '0';
-    --     Grant_SX_rd <= Grant_SW;
-    --     Grant_LX_rd <= Grant_LW;
-    --
-    --     CTS_W        <= CTS_X_rd;
-    --     empty_W      <= empty_X_rd;
-    --     FIFO_D_out_W <= FIFO_D_out_X_rd;
-    -- elsif Fault_On_FIFO_S = '1' then
-    --     RX_X_rd     <= RX_S;
-    --     DRTS_X_rd   <= DRTS_S;
-    --     Grant_NX_rd <= Grant_NS;
-    --     Grant_EX_rd <= Grant_ES;
-    --     Grant_WX_rd <= Grant_WS;
-    --     Grant_SX_rd <= '0';
-    --     Grant_LX_rd <= Grant_LS;
-    --
-    --     CTS_S        <= CTS_X_rd;
-    --     empty_S      <= empty_X_rd;
-    --     FIFO_D_out_S <= FIFO_D_out_X_rd;
-    -- elsif Fault_On_FIFO_L = '1' then
-    --     RX_X_rd     <= RX_L;
-    --     DRTS_X_rd   <= DRTS_L;
-    --     Grant_NX_rd <= Grant_NL;
-    --     Grant_EX_rd <= Grant_EL;
-    --     Grant_WX_rd <= Grant_WL;
-    --     Grant_SX_rd <= Grant_SL;
-    --     Grant_LX_rd <= '0';
-    --
-    --     CTS_L        <= CTS_X_rd;
-    --     empty_L      <= empty_X_rd;
-    --     FIFO_D_out_L <= FIFO_D_out_X_rd;
-    -- else
-    --     null;
-    -- end if;
+     if Fault_On_FIFO_N = '1' then
+         RX_X_rd     <= RX_N;
+         DRTS_X_rd   <= DRTS_N;
+         Grant_NX_rd <= '0';
+         Grant_EX_rd <= Grant_EN;
+         Grant_WX_rd <= Grant_WN;
+         Grant_SX_rd <= Grant_SN;
+         Grant_LX_rd <= Grant_LN;
+
+         CTS_N        <= CTS_X_rd;
+         empty_N      <= empty_X_rd;
+         FIFO_D_out_N <= FIFO_D_out_X_rd;
+
+     elsif Fault_On_FIFO_E = '1' then
+         RX_X_rd     <= RX_E;
+         DRTS_X_rd   <= DRTS_E;
+         Grant_NX_rd <= Grant_NE;
+         Grant_EX_rd <= '0';
+         Grant_WX_rd <= Grant_WE;
+         Grant_SX_rd <= Grant_SE;
+         Grant_LX_rd <= Grant_LE;
+
+         CTS_E        <= CTS_X_rd;
+         empty_E      <= empty_X_rd;
+         FIFO_D_out_E <= FIFO_D_out_X_rd;
+     elsif Fault_On_FIFO_W = '1' then
+         RX_X_rd     <= RX_W;
+         DRTS_X_rd   <= DRTS_W;
+         Grant_NX_rd <= Grant_NW;
+         Grant_EX_rd <= Grant_EW;
+         Grant_WX_rd <= '0';
+         Grant_SX_rd <= Grant_SW;
+         Grant_LX_rd <= Grant_LW;
+
+         CTS_W        <= CTS_X_rd;
+         empty_W      <= empty_X_rd;
+         FIFO_D_out_W <= FIFO_D_out_X_rd;
+     elsif Fault_On_FIFO_S = '1' then
+         RX_X_rd     <= RX_S;
+         DRTS_X_rd   <= DRTS_S;
+         Grant_NX_rd <= Grant_NS;
+         Grant_EX_rd <= Grant_ES;
+         Grant_WX_rd <= Grant_WS;
+         Grant_SX_rd <= '0';
+         Grant_LX_rd <= Grant_LS;
+
+         CTS_S        <= CTS_X_rd;
+         empty_S      <= empty_X_rd;
+         FIFO_D_out_S <= FIFO_D_out_X_rd;
+     elsif Fault_On_FIFO_L = '1' then
+         RX_X_rd     <= RX_L;
+         DRTS_X_rd   <= DRTS_L;
+         Grant_NX_rd <= Grant_NL;
+         Grant_EX_rd <= Grant_EL;
+         Grant_WX_rd <= Grant_WL;
+         Grant_SX_rd <= Grant_SL;
+         Grant_LX_rd <= '0';
+
+         CTS_L        <= CTS_X_rd;
+         empty_L      <= empty_X_rd;
+         FIFO_D_out_L <= FIFO_D_out_X_rd;
+     else
+         null;
+     end if;
     end process REDUNDANT_FIFO;
 
     REDUNDANT_LBDR : process (FIFO_D_out_E, FIFO_D_out_L, FIFO_D_out_N, FIFO_D_out_S, FIFO_D_out_W, LBDR_Fault_Info(0), LBDR_Fault_Info(1), LBDR_Fault_Info(2), LBDR_Fault_Info(3), LBDR_Fault_Info(4), Req_EE_r, Req_EL_r, Req_EN_r, Req_ES_r, Req_EW_r, Req_LE_r, Req_LL_r, Req_LN_r, Req_LS_r, Req_LW_r, Req_NE_r, Req_NL_r, Req_NN_r, Req_NS_r, Req_NW_r, Req_SE_r, Req_SL_r, Req_SN_r, Req_SS_r, Req_SW_r, Req_WE_r, Req_WL_r, Req_WN_r, Req_WS_r, Req_WW_r, Req_XE_rd, Req_XL_rd, Req_XN_rd, Req_XS_rd, Req_XW_rd, empty_E, empty_L, empty_N, empty_S, empty_W) is
     begin
-        --defaults. TODO: do not work
+        --defaults TODO: this don't work
         empty_X_rd                                                             <= '0';
         FIFO_D_out_X_rd(DATA_WIDTH - 1 downto DATA_WIDTH - 3)                  <= (others => '0');
         FIFO_D_out_X_rd(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19) <= (others => '0');
