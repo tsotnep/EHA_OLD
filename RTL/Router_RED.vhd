@@ -773,7 +773,7 @@ begin
     -- end if;
     end process REDUNDANT_LBDR;
 
-    REDUNDANT_Arbiter : process (Grant_EE_r, Grant_EL_r, Grant_EN_r, Grant_ES_r, Grant_EW_r, Grant_LE_r, Grant_LL_r, Grant_LN_r, Grant_LS_r, Grant_LW_r, Grant_NE_r, Grant_NL_r, Grant_NN_r, Grant_NS_r, Grant_NW_r, Grant_SE_r, Grant_SL_r, Grant_SN_r, Grant_SS_r, Grant_SW_r, Grant_WE_r, Grant_WL_r, Grant_WN_r, Grant_WS_r, Grant_WW_r, RTS_E_r, RTS_L_r, RTS_N_r, RTS_S_r, RTS_W_r, Xbar_sel_E_r, Xbar_sel_L_r, Xbar_sel_N_r, Xbar_sel_S_r, Xbar_sel_W_r) is
+   REDUNDANT_Arbiter : process (Grant_EE_r, Grant_EL_r, Grant_EN_r, Grant_ES_r, Grant_EW_r, Grant_LE_r, Grant_LL_r, Grant_LN_r, Grant_LS_r, Grant_LW_r, Grant_NE_r, Grant_NL_r, Grant_NN_r, Grant_NS_r, Grant_NW_r, Grant_SE_r, Grant_SL_r, Grant_SN_r, Grant_SS_r, Grant_SW_r, Grant_WE_r, Grant_WL_r, Grant_WN_r, Grant_WS_r, Grant_WW_r, RTS_E_r, RTS_L_r, RTS_N_r, RTS_S_r, RTS_W_r, Xbar_sel_E_r, Xbar_sel_L_r, Xbar_sel_N_r, Xbar_sel_S_r, Xbar_sel_W_r, Arbiter_Fault_Info(0), Arbiter_Fault_Info(1), Arbiter_Fault_Info(2), Arbiter_Fault_Info(3), Arbiter_Fault_Info(4), DCTS_E, DCTS_L, DCTS_N, DCTS_S, DCTS_w, Grant_AREDXE_rd, Grant_AREDXL_rd, Grant_AREDXN_rd, Grant_AREDXS_rd, Grant_AREDXW_rd, RTS_REDX_rd, Req_EL, Req_EN, Req_ES, Req_EW, Req_LE, Req_LN, Req_LS, Req_LW, Req_NE, Req_NL, Req_NS, Req_NW, Req_SE, Req_SL, Req_SN, Req_SW, Req_WE, Req_WL, Req_WN, Req_WS, Xbar_sel_AREDX_rd) is
     begin
         --defaults
         Req_AREDNX_rd <= '0';
@@ -823,83 +823,83 @@ begin
         Xbar_sel_L <= Xbar_sel_L_r;
         RTS_L      <= RTS_L_r;
 
-    -- if Fault_On_Arbiter_N = '1' then
-    --     Req_AREDNX_rd <= '0';
-    --     Req_AREDEX_rd <= Req_EN;
-    --     Req_AREDWX_rd <= Req_WN;
-    --     Req_AREDSX_rd <= Req_SN;
-    --     Req_AREDLX_rd <= Req_LN;
-    --     DCTS_REDX_rd  <= DCTS_N;
-    --     Grant_NN             <= Grant_AREDXN_rd;
-    --     Grant_NE             <= Grant_AREDXE_rd;
-    --     Grant_NW             <= Grant_AREDXW_rd;
-    --     Grant_NS             <= Grant_AREDXS_rd;
-    --     Grant_NL             <= Grant_AREDXL_rd;
-    --     Xbar_sel_N           <= Xbar_sel_AREDX_rd;
-    --     RTS_N                <= RTS_REDX_rd;
-    --
-    -- elsif Fault_On_Arbiter_E = '1' then
-    --     Req_AREDNX_rd <= Req_NE;
-    --     Req_AREDEX_rd <= '0';
-    --     Req_AREDWX_rd <= Req_WE;
-    --     Req_AREDSX_rd <= Req_SE;
-    --     Req_AREDLX_rd <= Req_LE;
-    --     DCTS_REDX_rd  <= DCTS_E;
-    --     Grant_EN             <= Grant_AREDXN_rd;
-    --     Grant_EE             <= Grant_AREDXE_rd;
-    --     Grant_EW             <= Grant_AREDXW_rd;
-    --     Grant_ES             <= Grant_AREDXS_rd;
-    --     Grant_EL             <= Grant_AREDXL_rd;
-    --     Xbar_sel_E           <= Xbar_sel_AREDX_rd;
-    --     RTS_E                <= RTS_REDX_rd;
-    --
-    -- elsif Fault_On_Arbiter_W = '1' then
-    --     Req_AREDNX_rd <= Req_NW;
-    --     Req_AREDEX_rd <= Req_EW;
-    --     Req_AREDWX_rd <= '0';
-    --     Req_AREDSX_rd <= Req_SW;
-    --     Req_AREDLX_rd <= Req_LW;
-    --     DCTS_REDX_rd  <= DCTS_W;
-    --     Grant_WN             <= Grant_AREDXN_rd;
-    --     Grant_WE             <= Grant_AREDXE_rd;
-    --     Grant_WW             <= Grant_AREDXW_rd;
-    --     Grant_WS             <= Grant_AREDXS_rd;
-    --     Grant_WL             <= Grant_AREDXL_rd;
-    --     Xbar_sel_W           <= Xbar_sel_AREDX_rd;
-    --     RTS_W                <= RTS_REDX_rd;
-    --
-    -- elsif Fault_On_Arbiter_S = '1' then
-    --     Req_AREDNX_rd <= Req_NS;
-    --     Req_AREDEX_rd <= Req_ES;
-    --     Req_AREDWX_rd <= Req_WS;
-    --     Req_AREDSX_rd <= '0';
-    --     Req_AREDLX_rd <= Req_LS;
-    --     DCTS_REDX_rd  <= DCTS_S;
-    --     Grant_SN             <= Grant_AREDXN_rd;
-    --     Grant_SE             <= Grant_AREDXE_rd;
-    --     Grant_SW             <= Grant_AREDXW_rd;
-    --     Grant_SS             <= Grant_AREDXS_rd;
-    --     Grant_SL             <= Grant_AREDXL_rd;
-    --     Xbar_sel_S           <= Xbar_sel_AREDX_rd;
-    --     RTS_S                <= RTS_REDX_rd;
-    --
-    -- elsif Fault_On_Arbiter_L = '1' then
-    --     Req_AREDNX_rd <= Req_NL;
-    --     Req_AREDEX_rd <= Req_EL;
-    --     Req_AREDWX_rd <= Req_WL;
-    --     Req_AREDSX_rd <= Req_SL;
-    --     Req_AREDLX_rd <= '0';
-    --     DCTS_REDX_rd  <= DCTS_L;
-    --     Grant_LN             <= Grant_AREDXN_rd;
-    --     Grant_LE             <= Grant_AREDXE_rd;
-    --     Grant_LW             <= Grant_AREDXW_rd;
-    --     Grant_LS             <= Grant_AREDXS_rd;
-    --     Grant_LL             <= Grant_AREDXL_rd;
-    --     Xbar_sel_L           <= Xbar_sel_AREDX_rd;
-    --     RTS_L                <= RTS_REDX_rd;
-    -- else
-    --     null;
-    -- end if;
+     if Fault_On_Arbiter_N = '1' then
+         Req_AREDNX_rd <= '0';
+         Req_AREDEX_rd <= Req_EN;
+         Req_AREDWX_rd <= Req_WN;
+         Req_AREDSX_rd <= Req_SN;
+         Req_AREDLX_rd <= Req_LN;
+         DCTS_REDX_rd  <= DCTS_N;
+         Grant_NN             <= Grant_AREDXN_rd;
+         Grant_NE             <= Grant_AREDXE_rd;
+         Grant_NW             <= Grant_AREDXW_rd;
+         Grant_NS             <= Grant_AREDXS_rd;
+         Grant_NL             <= Grant_AREDXL_rd;
+         Xbar_sel_N           <= Xbar_sel_AREDX_rd;
+         RTS_N                <= RTS_REDX_rd;
+
+     elsif Fault_On_Arbiter_E = '1' then
+         Req_AREDNX_rd <= Req_NE;
+         Req_AREDEX_rd <= '0';
+         Req_AREDWX_rd <= Req_WE;
+         Req_AREDSX_rd <= Req_SE;
+         Req_AREDLX_rd <= Req_LE;
+         DCTS_REDX_rd  <= DCTS_E;
+         Grant_EN             <= Grant_AREDXN_rd;
+         Grant_EE             <= Grant_AREDXE_rd;
+         Grant_EW             <= Grant_AREDXW_rd;
+         Grant_ES             <= Grant_AREDXS_rd;
+         Grant_EL             <= Grant_AREDXL_rd;
+         Xbar_sel_E           <= Xbar_sel_AREDX_rd;
+         RTS_E                <= RTS_REDX_rd;
+
+     elsif Fault_On_Arbiter_W = '1' then
+         Req_AREDNX_rd <= Req_NW;
+         Req_AREDEX_rd <= Req_EW;
+         Req_AREDWX_rd <= '0';
+         Req_AREDSX_rd <= Req_SW;
+         Req_AREDLX_rd <= Req_LW;
+         DCTS_REDX_rd  <= DCTS_W;
+         Grant_WN             <= Grant_AREDXN_rd;
+         Grant_WE             <= Grant_AREDXE_rd;
+         Grant_WW             <= Grant_AREDXW_rd;
+         Grant_WS             <= Grant_AREDXS_rd;
+         Grant_WL             <= Grant_AREDXL_rd;
+         Xbar_sel_W           <= Xbar_sel_AREDX_rd;
+         RTS_W                <= RTS_REDX_rd;
+
+     elsif Fault_On_Arbiter_S = '1' then
+         Req_AREDNX_rd <= Req_NS;
+         Req_AREDEX_rd <= Req_ES;
+         Req_AREDWX_rd <= Req_WS;
+         Req_AREDSX_rd <= '0';
+         Req_AREDLX_rd <= Req_LS;
+         DCTS_REDX_rd  <= DCTS_S;
+         Grant_SN             <= Grant_AREDXN_rd;
+         Grant_SE             <= Grant_AREDXE_rd;
+         Grant_SW             <= Grant_AREDXW_rd;
+         Grant_SS             <= Grant_AREDXS_rd;
+         Grant_SL             <= Grant_AREDXL_rd;
+         Xbar_sel_S           <= Xbar_sel_AREDX_rd;
+         RTS_S                <= RTS_REDX_rd;
+
+     elsif Fault_On_Arbiter_L = '1' then
+         Req_AREDNX_rd <= Req_NL;
+         Req_AREDEX_rd <= Req_EL;
+         Req_AREDWX_rd <= Req_WL;
+         Req_AREDSX_rd <= Req_SL;
+         Req_AREDLX_rd <= '0';
+         DCTS_REDX_rd  <= DCTS_L;
+         Grant_LN             <= Grant_AREDXN_rd;
+         Grant_LE             <= Grant_AREDXE_rd;
+         Grant_LW             <= Grant_AREDXW_rd;
+         Grant_LS             <= Grant_AREDXS_rd;
+         Grant_LL             <= Grant_AREDXL_rd;
+         Xbar_sel_L           <= Xbar_sel_AREDX_rd;
+         RTS_L                <= RTS_REDX_rd;
+     else
+         null;
+     end if;
     end process REDUNDANT_Arbiter;
 
     REDUNDANT_Xbar : process (TX_E_r, TX_L_r, TX_N_r, TX_S_r, TX_W_r, TX_REDX_rd, Xbar_Fault_Info(0), Xbar_Fault_Info(1), Xbar_Fault_Info(2), Xbar_Fault_Info(3), Xbar_Fault_Info(4), Xbar_sel_E, Xbar_sel_L, Xbar_sel_N, Xbar_sel_S, Xbar_sel_W) is
