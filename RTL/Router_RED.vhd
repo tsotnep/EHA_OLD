@@ -86,6 +86,67 @@ architecture behavior of router is
         );
     end COMPONENT;
 
+
+
+    -- FIFO
+    ------------------------------------------------------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------------------------------------------
+    signal CTS_N_r, CTS_E_r, CTS_w_r, CTS_S_r, CTS_L_r                                    : std_logic;
+    signal FIFO_D_out_N, FIFO_D_out_E, FIFO_D_out_W, FIFO_D_out_S, FIFO_D_out_L                                              : std_logic_vector(DATA_WIDTH - 1 downto 0);
+    signal FIFO_D_out_N_r, FIFO_D_out_E_r, FIFO_D_out_W_r, FIFO_D_out_S_r, FIFO_D_out_L_r : std_logic_vector(DATA_WIDTH - 1 downto 0);
+    signal empty_N, empty_E, empty_W, empty_S, empty_L                                                                       : std_logic;
+    signal empty_N_r, empty_E_r, empty_W_r, empty_S_r, empty_L_r                          : std_logic;
+    --redundant FIFO
+    signal RX_X_rd                                                                                                    : std_logic_vector(DATA_WIDTH - 1 downto 0);
+    signal DRTS_X_rd                                                                                                  : std_logic;
+    signal Grant_NX_rd                                                                                                : std_logic;
+    signal Grant_EX_rd                                                                                                : std_logic;
+    signal Grant_WX_rd                                                                                                : std_logic;
+    signal Grant_SX_rd                                                                                                : std_logic;
+    signal Grant_LX_rd                                                                                                : std_logic;
+    signal CTS_X_rd                                                                                                   : std_logic;
+    signal empty_X_rd                                                                                                 : std_logic;
+    signal FIFO_D_out_X_rd                                                                                            : std_logic_vector(DATA_WIDTH - 1 downto 0);
+
+    --Fault Information for redundant FIFO
+    signal FIFO_Fault_Info : std_logic_vector(4 downto 0) := "00000";
+    alias Fault_On_FIFO_N  : std_logic IS FIFO_Fault_Info(0);
+    alias Fault_On_FIFO_E  : std_logic IS FIFO_Fault_Info(1);
+    alias Fault_On_FIFO_W  : std_logic IS FIFO_Fault_Info(2);
+    alias Fault_On_FIFO_S  : std_logic IS FIFO_Fault_Info(3);
+    alias Fault_On_FIFO_L  : std_logic IS FIFO_Fault_Info(4);
+
+    -- LBDR
+    ------------------------------------------------------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------------------------------------------
+    signal Req_NN_r, Req_EN_r, Req_WN_r, Req_SN_r, Req_LN_r : std_logic;
+    signal Req_NE_r, Req_EE_r, Req_WE_r, Req_SE_r, Req_LE_r : std_logic;
+    signal Req_NW_r, Req_EW_r, Req_WW_r, Req_SW_r, Req_LW_r : std_logic;
+    signal Req_NS_r, Req_ES_r, Req_WS_r, Req_SS_r, Req_LS_r : std_logic;
+    signal Req_NL_r, Req_EL_r, Req_WL_r, Req_SL_r, Req_LL_r : std_logic;
+    signal Req_NN, Req_EN, Req_WN, Req_SN, Req_LN                                              : std_logic;
+    signal Req_NE, Req_EE, Req_WE, Req_SE, Req_LE                                              : std_logic;
+    signal Req_NW, Req_EW, Req_WW, Req_SW, Req_LW                                              : std_logic;
+    signal Req_NS, Req_ES, Req_WS, Req_SS, Req_LS                                              : std_logic;
+    signal Req_NL, Req_EL, Req_WL, Req_SL, Req_LL                                              : std_logic;
+
+    --redundant LBDR
+    signal Req_XN_rd : std_logic;
+    signal Req_XE_rd : std_logic;
+    signal Req_XW_rd : std_logic;
+    signal Req_XS_rd : std_logic;
+    signal Req_XL_rd : std_logic;
+
+    --Fault Information for redundant LBDR
+    signal LBDR_Fault_Info : std_logic_vector(4 downto 0) := "00000";
+    alias Fault_On_LBDR_N  : std_logic IS LBDR_Fault_Info(0);
+    alias Fault_On_LBDR_E  : std_logic IS LBDR_Fault_Info(1);
+    alias Fault_On_LBDR_W  : std_logic IS LBDR_Fault_Info(2);
+    alias Fault_On_LBDR_S  : std_logic IS LBDR_Fault_Info(3);
+    alias Fault_On_LBDR_L  : std_logic IS LBDR_Fault_Info(4);
+
     -- ARBITER
     ------------------------------------------------------------------------------------------------------------------------------
     ------------------------------------------------------------------------------------------------------------------------------
@@ -119,42 +180,12 @@ architecture behavior of router is
     signal RTS_REDX_rd       : std_logic;
 
     --Fault Information for redundant Arbiter
-    signal Arbiter_Fault_Info : std_logic_vector(4 downto 0) := "00000";
+    signal Arbiter_Fault_Info : std_logic_vector(4 downto 0) := "00010";
     alias Fault_On_Arbiter_N  : std_logic IS Arbiter_Fault_Info(0);
     alias Fault_On_Arbiter_E  : std_logic IS Arbiter_Fault_Info(1);
     alias Fault_On_Arbiter_W  : std_logic IS Arbiter_Fault_Info(2);
     alias Fault_On_Arbiter_S  : std_logic IS Arbiter_Fault_Info(3);
     alias Fault_On_Arbiter_L  : std_logic IS Arbiter_Fault_Info(4);
-
-    -- LBDR
-    ------------------------------------------------------------------------------------------------------------------------------
-    ------------------------------------------------------------------------------------------------------------------------------
-    ------------------------------------------------------------------------------------------------------------------------------
-    signal Req_NN_r, Req_EN_r, Req_WN_r, Req_SN_r, Req_LN_r : std_logic;
-    signal Req_NE_r, Req_EE_r, Req_WE_r, Req_SE_r, Req_LE_r : std_logic;
-    signal Req_NW_r, Req_EW_r, Req_WW_r, Req_SW_r, Req_LW_r : std_logic;
-    signal Req_NS_r, Req_ES_r, Req_WS_r, Req_SS_r, Req_LS_r : std_logic;
-    signal Req_NL_r, Req_EL_r, Req_WL_r, Req_SL_r, Req_LL_r : std_logic;
-    signal Req_NN, Req_EN, Req_WN, Req_SN, Req_LN                                              : std_logic;
-    signal Req_NE, Req_EE, Req_WE, Req_SE, Req_LE                                              : std_logic;
-    signal Req_NW, Req_EW, Req_WW, Req_SW, Req_LW                                              : std_logic;
-    signal Req_NS, Req_ES, Req_WS, Req_SS, Req_LS                                              : std_logic;
-    signal Req_NL, Req_EL, Req_WL, Req_SL, Req_LL                                              : std_logic;
-
-    --redundant LBDR
-    signal Req_XN_rd : std_logic;
-    signal Req_XE_rd : std_logic;
-    signal Req_XW_rd : std_logic;
-    signal Req_XS_rd : std_logic;
-    signal Req_XL_rd : std_logic;
-
-    --Fault Information for redundant LBDR
-    signal LBDR_Fault_Info : std_logic_vector(4 downto 0) := "00000";
-    alias Fault_On_LBDR_N  : std_logic IS LBDR_Fault_Info(0);
-    alias Fault_On_LBDR_E  : std_logic IS LBDR_Fault_Info(1);
-    alias Fault_On_LBDR_W  : std_logic IS LBDR_Fault_Info(2);
-    alias Fault_On_LBDR_S  : std_logic IS LBDR_Fault_Info(3);
-    alias Fault_On_LBDR_L  : std_logic IS LBDR_Fault_Info(4);
 
     -- XBAR
     ------------------------------------------------------------------------------------------------------------------------------
@@ -169,42 +200,12 @@ architecture behavior of router is
     signal TX_REDX_rd          : std_logic_vector(DATA_WIDTH - 1 downto 0);
 
     --Fault Information for redundant XBAR
-    signal Xbar_Fault_Info : std_logic_vector(4 downto 0) := "00000";
+    signal Xbar_Fault_Info : std_logic_vector(4 downto 0) := "00001";
     alias Fault_On_Xbar_N  : std_logic IS Xbar_Fault_Info(0);
     alias Fault_On_Xbar_E  : std_logic IS Xbar_Fault_Info(1);
     alias Fault_On_Xbar_W  : std_logic IS Xbar_Fault_Info(2);
     alias Fault_On_Xbar_S  : std_logic IS Xbar_Fault_Info(3);
     alias Fault_On_Xbar_L  : std_logic IS Xbar_Fault_Info(4);
-
-    -- FIFO
-    ------------------------------------------------------------------------------------------------------------------------------
-    ------------------------------------------------------------------------------------------------------------------------------
-    ------------------------------------------------------------------------------------------------------------------------------
-    signal CTS_N_r, CTS_E_r, CTS_w_r, CTS_S_r, CTS_L_r                                    : std_logic;
-    signal FIFO_D_out_N, FIFO_D_out_E, FIFO_D_out_W, FIFO_D_out_S, FIFO_D_out_L                                              : std_logic_vector(DATA_WIDTH - 1 downto 0);
-    signal FIFO_D_out_N_r, FIFO_D_out_E_r, FIFO_D_out_W_r, FIFO_D_out_S_r, FIFO_D_out_L_r : std_logic_vector(DATA_WIDTH - 1 downto 0);
-    signal empty_N, empty_E, empty_W, empty_S, empty_L                                                                       : std_logic;
-    signal empty_N_r, empty_E_r, empty_W_r, empty_S_r, empty_L_r                          : std_logic;
-    --redundant FIFO
-    signal RX_X_rd                                                                                                    : std_logic_vector(DATA_WIDTH - 1 downto 0);
-    signal DRTS_X_rd                                                                                                  : std_logic;
-    signal Grant_NX_rd                                                                                                : std_logic;
-    signal Grant_EX_rd                                                                                                : std_logic;
-    signal Grant_WX_rd                                                                                                : std_logic;
-    signal Grant_SX_rd                                                                                                : std_logic;
-    signal Grant_LX_rd                                                                                                : std_logic;
-    signal CTS_X_rd                                                                                                   : std_logic;
-    signal empty_X_rd                                                                                                 : std_logic;
-    signal FIFO_D_out_X_rd                                                                                            : std_logic_vector(DATA_WIDTH - 1 downto 0);
-
-    --Fault Information for redundant FIFO
-    signal FIFO_Fault_Info : std_logic_vector(4 downto 0) := "00000";
-    alias Fault_On_FIFO_N  : std_logic IS FIFO_Fault_Info(0);
-    alias Fault_On_FIFO_E  : std_logic IS FIFO_Fault_Info(1);
-    alias Fault_On_FIFO_W  : std_logic IS FIFO_Fault_Info(2);
-    alias Fault_On_FIFO_S  : std_logic IS FIFO_Fault_Info(3);
-    alias Fault_On_FIFO_L  : std_logic IS FIFO_Fault_Info(4);
-
 begin
 
     ------------------------------------------------------------------------------------------------------------------------------
@@ -232,7 +233,7 @@ begin
     -- all the FIFOs
     FIFO_N : FIFO generic map(DATA_WIDTH => DATA_WIDTH)
         PORT MAP(reset     => reset,
-                 clk       => '0',
+                 clk       => clk,
                  RX        => RX_N,
                  DRTS      => DRTS_N,
                  read_en_N => '0',
@@ -527,7 +528,7 @@ begin
 
     -- all the Xbars
     XBAR_N : XBAR generic map(DATA_WIDTH => DATA_WIDTH)
-        PORT MAP(North_in => FIFO_D_out_N,
+        PORT MAP(North_in => FIFO_D_out_N, --(others =>'0')
                  East_in  => FIFO_D_out_E,
                  West_in  => FIFO_D_out_W,
                  South_in => FIFO_D_out_S,
@@ -581,9 +582,9 @@ begin
     ------------------------------------------------------------------------------------------------------------------------------
 
     -- all processes for redundancy
-     REDUNDANT_FIFO : process (CTS_E_r, CTS_L_r, CTS_N_r, CTS_S_r, CTS_w_r, FIFO_D_out_E_r, FIFO_D_out_L_r, FIFO_D_out_N_r, FIFO_D_out_S_r, FIFO_D_out_W_r, empty_E_r, empty_L_r, empty_N_r, empty_S_r, empty_W_r, CTS_X_rd, DRTS_E, DRTS_L, DRTS_N, DRTS_S, DRTS_W, FIFO_D_out_X_rd, FIFO_Fault_Info(0), FIFO_Fault_Info(1), FIFO_Fault_Info(2), FIFO_Fault_Info(3), FIFO_Fault_Info(4), Grant_EL, Grant_EN, Grant_ES, Grant_EW, Grant_LE, Grant_LN, Grant_LS, Grant_LW, Grant_NE, Grant_NL, Grant_NS, Grant_NW, Grant_SE, Grant_SL, Grant_SN, Grant_SW, Grant_WE, Grant_WL, Grant_WN, Grant_WS, RX_E, RX_L, RX_N, RX_S, RX_W, empty_X_rd) is
+          REDUNDANT_FIFO : process (CTS_E_r, CTS_L_r, CTS_N_r, CTS_S_r, CTS_w_r, FIFO_D_out_E_r, FIFO_D_out_L_r, FIFO_D_out_N_r, FIFO_D_out_S_r, FIFO_D_out_W_r, empty_E_r, empty_L_r, empty_N_r, empty_S_r, empty_W_r, CTS_X_rd, DRTS_E, DRTS_L, DRTS_N, DRTS_S, DRTS_W, FIFO_D_out_X_rd, FIFO_Fault_Info(0), FIFO_Fault_Info(1), FIFO_Fault_Info(2), FIFO_Fault_Info(3), FIFO_Fault_Info(4), Grant_EL, Grant_EN, Grant_ES, Grant_EW, Grant_LE, Grant_LN, Grant_LS, Grant_LW, Grant_NE, Grant_NL, Grant_NS, Grant_NW, Grant_SE, Grant_SL, Grant_SN, Grant_SW, Grant_WE, Grant_WL, Grant_WN, Grant_WS, RX_E, RX_L, RX_N, RX_S, RX_W, empty_X_rd) is
     begin
-        --defaults TODO: this don't work
+        --defaults TODO: this don't work, if there is a fault
         RX_X_rd     <= (others => '0');
         DRTS_X_rd   <= '0';
         Grant_NX_rd <= '0';
@@ -678,7 +679,7 @@ begin
 
     REDUNDANT_LBDR : process (FIFO_D_out_E, FIFO_D_out_L, FIFO_D_out_N, FIFO_D_out_S, FIFO_D_out_W, LBDR_Fault_Info(0), LBDR_Fault_Info(1), LBDR_Fault_Info(2), LBDR_Fault_Info(3), LBDR_Fault_Info(4), Req_EE_r, Req_EL_r, Req_EN_r, Req_ES_r, Req_EW_r, Req_LE_r, Req_LL_r, Req_LN_r, Req_LS_r, Req_LW_r, Req_NE_r, Req_NL_r, Req_NN_r, Req_NS_r, Req_NW_r, Req_SE_r, Req_SL_r, Req_SN_r, Req_SS_r, Req_SW_r, Req_WE_r, Req_WL_r, Req_WN_r, Req_WS_r, Req_WW_r, Req_XE_rd, Req_XL_rd, Req_XN_rd, Req_XS_rd, Req_XW_rd, empty_E, empty_L, empty_N, empty_S, empty_W) is
     begin
-        --defaults TODO: this don't work
+        --defaults TODO: this don't work, if there is a fault
         empty_X_rd                                                             <= '0';
         FIFO_D_out_X_rd(DATA_WIDTH - 1 downto DATA_WIDTH - 3)                  <= (others => '0');
         FIFO_D_out_X_rd(DATA_WIDTH - 19 + NoC_size - 1 downto DATA_WIDTH - 19) <= (others => '0');
@@ -772,6 +773,7 @@ begin
          null;
      end if;
     end process REDUNDANT_LBDR;
+
 
    REDUNDANT_Arbiter : process (Grant_EE_r, Grant_EL_r, Grant_EN_r, Grant_ES_r, Grant_EW_r, Grant_LE_r, Grant_LL_r, Grant_LN_r, Grant_LS_r, Grant_LW_r, Grant_NE_r, Grant_NL_r, Grant_NN_r, Grant_NS_r, Grant_NW_r, Grant_SE_r, Grant_SL_r, Grant_SN_r, Grant_SS_r, Grant_SW_r, Grant_WE_r, Grant_WL_r, Grant_WN_r, Grant_WS_r, Grant_WW_r, RTS_E_r, RTS_L_r, RTS_N_r, RTS_S_r, RTS_W_r, Xbar_sel_E_r, Xbar_sel_L_r, Xbar_sel_N_r, Xbar_sel_S_r, Xbar_sel_W_r, Arbiter_Fault_Info(0), Arbiter_Fault_Info(1), Arbiter_Fault_Info(2), Arbiter_Fault_Info(3), Arbiter_Fault_Info(4), DCTS_E, DCTS_L, DCTS_N, DCTS_S, DCTS_w, Grant_AREDXE_rd, Grant_AREDXL_rd, Grant_AREDXN_rd, Grant_AREDXS_rd, Grant_AREDXW_rd, RTS_REDX_rd, Req_EL, Req_EN, Req_ES, Req_EW, Req_LE, Req_LN, Req_LS, Req_LW, Req_NE, Req_NL, Req_NS, Req_NW, Req_SE, Req_SL, Req_SN, Req_SW, Req_WE, Req_WL, Req_WN, Req_WS, Xbar_sel_AREDX_rd) is
     begin
